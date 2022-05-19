@@ -2,8 +2,7 @@ NAME := markdown
 VERSION := v1
 
 # Container target
-IMAGE_REGISTRY := ghcr.io/carlsmedstad
-IMAGE_MARKDOWN := $(IMAGE_REGISTRY)/mkincl-$(NAME):$(VERSION)
+IMAGE_MARKDOWN := ghcr.io/mkincl/$(NAME)-provider:$(VERSION)
 
 .PHONY: enter-container-$(NAME)
 enter-container-$(NAME):
