@@ -12,14 +12,19 @@ enter-container-$(NAME):
 .PHONY: lint lint-$(NAME)
 lint: lint-$(NAME)
 
-# Actual targets
+# Which files to act on. This is overrideable.
+FILES_MARKDOWN = $(shell find . -type f -iname '*.md')
+
+.PHONY: has-files-markdown
+has-files-markdown:
+	@for file in $(FILES_MARKDOWN); do exit 0; done; echo "FILES_MARKDOWN is empty"; exit 1
+
+# Specific targets
 .PHONY: lint-$(NAME)-markdownlint lint-$(NAME)-markdown-link-check
 lint-$(NAME): lint-$(NAME)-markdownlint lint-$(NAME)-markdown-link-check
 
-lint-$(NAME)-markdownlint:
-	markdownlint .
-
-MARKDOWN_FILES = $(shell find . -type f -iname '*.md')
+lint-$(NAME)-markdownlint: has-files-markdown
+	markdownlint $(FILES_MARKDOWN)
 
 MARKDOWN_LINK_CHECK_CONFIG ?= .markdown-link-check.json
 ifeq ("$(wildcard $(MARKDOWN_LINK_CHECK_CONFIG))","")
@@ -28,5 +33,5 @@ else
 MARKDOWN_LINK_CHECK_CONFIG_ARG = --config $(MARKDOWN_LINK_CHECK_CONFIG)
 endif
 
-lint-$(NAME)-markdown-link-check:
-	markdown-link-check $(MARKDOWN_LINK_CHECK_CONFIG_ARG) --quiet	$(MARKDOWN_FILES)
+lint-$(NAME)-markdown-link-check: has-files-markdown
+	markdown-link-check $(MARKDOWN_LINK_CHECK_CONFIG_ARG) --quiet $(FILES_MARKDOWN)
